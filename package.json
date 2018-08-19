@@ -1,0 +1,6 @@
+{
+  "name": "team1-backend",
+  "version": "1.0.0",
+  "description": "Source code for the database.",
+  "main": "server.js"
+}
