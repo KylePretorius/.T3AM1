@@ -16,7 +16,7 @@ api.use(bodyParser.urlencoded({
 var con = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "31415926",
+  password: "...",
   database: "dbIP"
 });
 
@@ -27,6 +27,7 @@ con.connect(function(err) {
 
 
 api.post("/addFile/", async(req,response) =>{
+  console.log("addFile");
   var form = new formidable.IncomingForm();
     form.parse(req, async(err, fields, files) => {
       await con.query(`SELECT * FROM Files WHERE hash=?`,
@@ -37,13 +38,14 @@ api.post("/addFile/", async(req,response) =>{
           var oldpath = files.image.path;
           var name=files.image.name;
           var res=name.split(".");
-          var newpath = '/home/kyle/Pictures/' +fields.hash+"."+res[1];
+          var newpath = '/home/kyle/Pictures/'+fields.hash+"."+res[1];
+          var savepath=fields.hash+"."+res[1];
           fs.rename(oldpath, newpath, function (err) {
             if (err) throw err;
             response.end();
           });
           con.query('INSERT INTO Files VALUES(?,?)',
-          [fields.hash,newpath]);
+          [fields.hash,savepath]);
           response.sendStatus(200);
         }
       });
@@ -51,14 +53,15 @@ api.post("/addFile/", async(req,response) =>{
 });
 
 api.get("/getFile/:hash",async(req,response) =>{
+  console.log("getFile");
   await con.query(`SELECT path FROM Files WHERE hash=?`,
   [req.params.hash],(err,rows)=>{
     if(rows.length==0){
       response.sendStatus(404);
     }else{
-      response.send(rows[0].file.toString('utf8'));
+      response.send(rows[0].path.toString('utf8'));
     }
-  });
+  })
 });
 
 api.get("/getAdress",(req,response) =>{
