@@ -16,7 +16,7 @@ api.use(bodyParser.urlencoded({
 var con = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "31415926",
+  password: "...",
   database: "dbIP"
 });
 
