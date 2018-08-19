@@ -25,7 +25,6 @@ con.connect(function(err) {
   console.log("Connected!");
 });
 
-
 api.post("/addFile/", async(req,response) =>{
   console.log("addFile");
   var form = new formidable.IncomingForm();
@@ -81,7 +80,6 @@ api.get("/getFiles/:hashes",async(req,response) =>{
   console.log(values);
   await con.query(`SELECT path FROM Files WHERE hash IN `+values,
   [values],(err,rows)=>{
-
     if(rows.length<count){
       response.sendStatus(404);
       return;
@@ -110,4 +108,4 @@ api.get("/getAdress",(req,response) =>{
   response.send("adress goes here");
 });
 
-api.listen(8080);
+api.listen(10101);
