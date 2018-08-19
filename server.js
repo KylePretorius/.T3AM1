@@ -16,7 +16,7 @@ api.use(bodyParser.urlencoded({
 var con = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "...",
+  password: "31415926",
   database: "dbIP"
 });
 
@@ -64,8 +64,38 @@ api.get("/getFile/:hash",async(req,response) =>{
   })
 });
 
+api.get("/getFiles/:hashes",async(req,response) =>{
+  console.log("getFiles");
+  var obj = JSON.parse(req.params.hashes);
+  var result={
+    paths: []
+  };
+  var count=0;
+  var values="(";
+  for(i in obj.hashes){
+    values+="'"+obj.hashes[i]+"',";
+    count++;
+  }
+  values=values.substr(0,values.length-1);
+  values+=")";
+  console.log(values);
+  await con.query(`SELECT path FROM Files WHERE hash IN `+values,
+  [values],(err,rows)=>{
+
+    if(rows.length<count){
+      response.sendStatus(404);
+      return;
+    }else{
+      for(i in rows){
+        result.paths.push(rows[i].path.toString('utf8'));
+      }
+        response.send(JSON.stringify(result));
+    }
+  });
+});
+
 api.get("/checkFile/:hash",async(req,response) =>{
-  console.log("getFile");
+  console.log("checkFile");
   await con.query(`SELECT path FROM Files WHERE hash=?`,
   [req.params.hash],(err,rows)=>{
     if(rows.length==0){
