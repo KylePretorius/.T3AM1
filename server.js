@@ -104,7 +104,7 @@ api.get("/checkFile/:hash",async(req,response) =>{
 });
 
 api.get("/getAdress",(req,response) =>{
-  response.send("adress goes here");
+  response.send("0xd772408ee0fad9402ccf830336d61e44692ec70d");
 });
 
 api.listen(10101);
