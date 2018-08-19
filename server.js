@@ -28,27 +28,27 @@ con.connect(function(err) {
 api.post("/addFile/", async(req,response) =>{
   console.log("addFile");
   var form = new formidable.IncomingForm();
-    form.parse(req, async(err, fields, files) => {
-      await con.query(`SELECT * FROM Files WHERE hash=?`,
-      [fields.hash],(err,rows)=>{
-        if(rows.length!=0){
-          response.sendStatus(400);
-        }else{
-          var oldpath = files.image.path;
-          var name=files.image.name;
-          var res=name.split(".");
-          var newpath = '/home/kyle/Pictures/'+fields.hash+"."+res[1];
-          var savepath=fields.hash+"."+res[1];
-          fs.rename(oldpath, newpath, function (err) {
-            if (err) throw err;
-            response.end();
-          });
-          con.query('INSERT INTO Files VALUES(?,?)',
-          [fields.hash,savepath]);
-          response.sendStatus(200);
-        }
-      });
+  form.parse(req, async(err, fields, files) => {
+    await con.query(`SELECT * FROM Files WHERE hash=?`,
+    [fields.hash],(err,rows)=>{
+      if(rows.length!=0){
+        response.sendStatus(400);
+      }else{
+        var oldpath = files.image.path;
+        var name=files.image.name;
+        var res=name.split(".");
+        var newpath = '/home/kyle/Pictures/'+fields.hash+"."+res[1];
+        var savepath=fields.hash+"."+res[1];
+        fs.rename(oldpath, newpath, function (err) {
+          if (err) throw err;
+          response.end();
+        });
+        con.query('INSERT INTO Files VALUES(?,?)',
+        [fields.hash,savepath]);
+        response.sendStatus(200);
+      }
     });
+  });
 });
 
 api.get("/getFile/:hash",async(req,response) =>{
@@ -77,7 +77,6 @@ api.get("/getFiles/:hashes",async(req,response) =>{
   }
   values=values.substr(0,values.length-1);
   values+=")";
-  console.log(values);
   await con.query(`SELECT path FROM Files WHERE hash IN `+values,
   [values],(err,rows)=>{
     if(rows.length<count){
