@@ -16,7 +16,7 @@ api.use(bodyParser.urlencoded({
 var con = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "...",
+  password: "31415926",
   database: "dbIP"
 });
 
@@ -60,6 +60,18 @@ api.get("/getFile/:hash",async(req,response) =>{
       response.sendStatus(404);
     }else{
       response.send(rows[0].path.toString('utf8'));
+    }
+  })
+});
+
+api.get("/checkFile/:hash",async(req,response) =>{
+  console.log("getFile");
+  await con.query(`SELECT path FROM Files WHERE hash=?`,
+  [req.params.hash],(err,rows)=>{
+    if(rows.length==0){
+      response.sendStatus(204);
+    }else{
+      response.sendStatus(201);
     }
   })
 });
